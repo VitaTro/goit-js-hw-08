@@ -5,7 +5,7 @@ import _throttle from 'lodash.throttle';
 const keyStorage = 'videoplayer-current-time';
 
 const iframe = document.querySelector('iframe');
-console.log(iframe);
+
 
 
 // викликання події, як документ буде готовий
@@ -33,4 +33,4 @@ player.on(
     }, 1000)
   );
 
-
+console.log(iframe);
