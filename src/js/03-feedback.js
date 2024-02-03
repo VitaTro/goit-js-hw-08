@@ -14,9 +14,9 @@ const submitButton = document.querySelector('button');
 
 const saveFeedbackForm =  JSON.parse(localStorage.getItem(keyStorage));
 if(saveFeedbackForm) {
- inputEmail.value = saveFeedbackForm.email;
-inputMessage.value = saveFeedbackForm.message;
-
+ inputEmail.value = saveFeedbackForm.email.trim();
+inputMessage.value = saveFeedbackForm.message.trim();
+submitButton.disabled = !(inputEmail.value.trim() && inputMessage.value.trim());
 }
 
 
@@ -29,7 +29,7 @@ form.addEventListener('input', _throttle(() => {
 message: inputMessage.value,
   }) 
 );
-submitButton.disabled = !(inputEmail.value && inputMessage.value);
+submitButton.disabled = !(inputEmail.value.trim() && inputMessage.value.trim());
 }, 500)
 );
 
@@ -39,7 +39,10 @@ submitButton.disabled = !(inputEmail.value && inputMessage.value);
   form.addEventListener('submit', event => {
  
     event.preventDefault();
-  
+  if(inputEmail.value.trim() === '' || inputMessage.value.trim() === '') {
+    alert("Please fill in all the fields!");
+    return;
+  }
   console.log({
   email: inputEmail.value,
     message: inputMessage.value,  
