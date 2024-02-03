@@ -5,42 +5,49 @@ import _throttle from 'lodash.throttle';
 const keyStorage = 'feedback-form-state';
 
 const form = document.querySelector('.feedback-form');
+const inputEmail = form.elements.email;
+const inputMessage = form.elements.message;
+const submitButton = document.querySelector('button');
 
 // оператор, який буде справджати, чи є збережені дані користувача
 // якщо ні, то пусте
 
-let save = {};
-if(localStorage.getItem(keyStorage)) {
-  let saveLocal = JSON.parse(localStorage.getItem(keyStorage));
+const saveFeedbackForm =  JSON.parse(localStorage.getItem(keyStorage));
+if(saveFeedbackForm) {
+ inputEmail.value = saveFeedbackForm.email;
+inputMessage.value = saveFeedbackForm.message;
 
-  if(saveLocal.email) form.email.value = saveLocal.email;
-  if(saveLocal.message) form.message.value = saveLocal.message;
 }
+
 
 // функція, яка буде зберігати дані в сховищі
 // сховище має оновлюватись не частіше 0,5 секунди
 
-form.addEventListener('input', _throttle((event) => {
-  if(localStorage.getItem(keyStorage)) save = JSON.parse(localStorage.getItem(keyStorage));
-
-  save[event.target.value] = event.target.value;
-  localStorage.setItem(keyStorage, JSON.stringify(save));
-}, 500));
+form.addEventListener('input', _throttle(() => {
+  localStorage.setItem(keyStorage, JSON.stringify({
+    email: inputEmail.value,
+message: inputMessage.value,
+  }) 
+);
+submitButton.disabled = !(inputEmail.value && inputMessage.value);
+}, 500)
+);
 
 // щоб не перезавантажувалась автоматично сторінка, використано preventDefault
 // після висилання форми вичистити поле сховище
 
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
+  form.addEventListener('submit', event => {
+ 
+    event.preventDefault();
+  
+  console.log({
+  email: inputEmail.value,
+    message: inputMessage.value,  
+  });
+  
+  form.reset();
+  localStorage.removeItem(keyStorage);
+  submitButton.disabled = true;
+  });
 
-
-if(form.email.value && form.message.value) {
-  form.email.value = "";
-  form.message.value = "";
-  console.log(JSON.parse(localStorage.getItem(keyStorage)));
-  localStorage.clear();
-  save = {}; 
-}
-
-});
 
